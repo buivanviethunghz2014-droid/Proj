@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TECHCOMBANK - Game mô phỏng V23</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}body{margin:0;background:#f4f5f7}.app{max-width:430px;margin:auto;min-height:100vh;background:#fff}.header{background:#e30613;color:#fff;padding:20px}.header h1{margin:0;font-size:24px}.simulation{font-size:12px;margin-top:5px}.balance{margin-top:20px;background:#fff;color:#222;padding:15px;border-radius:12px}.balance small{color:#777}.balance strong{display:block;font-size:26px;margin-top:5px}.menu{padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}button{border:0;border-radius:12px;padding:16px;font-size:15px;cursor:pointer;background:#eee}.menu button{min-height:80px}button.primary{width:100%;background:#e30613;color:#fff;margin-top:15px}.screen{padding:20px}input,select{width:100%;padding:14px;margin-top:7px;margin-bottom:14px;border:1px solid #ccc;border-radius:10px;font-size:16px}label{font-weight:bold}.otp{text-align:center;letter-spacing:6px;font-size:22px}.message{padding:12px;margin-top:15px;border-radius:10px;background:#f1f1f1}.hidden{display:none}.history{padding:15px}.history-item{padding:12px 0;border-bottom:1px solid #ddd}.preview{width:100%;max-height:240px;object-fit:contain;border:1px dashed #bbb;border-radius:10px;margin:8px 0 14px;display:none}
+.bottom-nav{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#fff;border-top:1px solid #e5e7eb;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:5}.bottom-nav button{background:#fff;border-radius:10px;padding:10px 4px;color:#666;font-size:12px}.bottom-nav button.active{color:#e30613;background:#fff1f2;font-weight:bold}.setting-row{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid #eee;gap:12px}.setting-row small{display:block;color:#777;margin-top:4px}.setting-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:0 14px;margin:14px 0}.section-title{font-size:13px;color:#777;margin:20px 0 8px;text-transform:uppercase}.profile-dot{width:42px;height:42px;border-radius:50%;background:#fde7e9;color:#e30613;display:inline-flex;align-items:center;justify-content:center;font-weight:bold;margin-right:10px}
+
+/* Giao diện mở rộng: thanh điều hướng và trang cài đặt */
+body{padding-bottom:78px}.app{box-shadow:0 0 24px rgba(0,0,0,.06)}
+.header{background:linear-gradient(135deg,#e30613,#b80012);padding:20px 18px 24px}
+.header h1{letter-spacing:.5px}.balance{box-shadow:0 8px 24px rgba(0,0,0,.08)}.greeting{font-size:17px;font-weight:700;margin-top:18px;color:#fff}.balance-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.balance-eye{padding:5px 8px;background:#f5f5f5;border-radius:8px;font-size:20px;line-height:1;color:#333;min-width:40px}.balance strong{letter-spacing:.2px}.home-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.bell-btn{width:44px;height:44px;padding:0;border-radius:50%;background:#fff;color:#e30613;font-size:22px;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.15)}.bell-badge{position:absolute;right:-1px;top:-1px;min-width:18px;height:18px;padding:0 4px;border-radius:10px;background:#e30613;color:#fff;font-size:11px;display:none;align-items:center;justify-content:center;font-weight:700}.history-empty{padding:18px 0;color:#777;text-align:center}.history-row{padding:14px 0;border-bottom:1px solid #eee}.history-row:last-child{border-bottom:0}.account-number{margin-top:12px;padding-top:10px;border-top:1px solid #eee}.account-number small{display:block;color:#777;font-size:12px}.account-number strong{display:block;font-size:17px;margin-top:3px;letter-spacing:1px}
+.section-title{font-size:20px;margin:8px 0 16px;color:#202124}
+.bottom-nav{position:fixed;z-index:10;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-top:1px solid #e6e6e6;padding:8px 8px max(8px,env(safe-area-inset-bottom));box-shadow:0 -5px 18px rgba(0,0,0,.06)}
+.bottom-nav button{background:transparent;border-radius:10px;padding:8px 3px;color:#777;font-size:12px;min-height:54px}.bottom-nav button span{display:block;font-size:21px;margin-bottom:3px}.bottom-nav button.active{color:#e30613;background:#fff3f4;font-weight:bold}
+.setting-group{border:1px solid #eee;border-radius:14px;overflow:hidden;margin:14px 0;background:#fff}.setting-row{display:flex;align-items:center;gap:12px;padding:15px;border-bottom:1px solid #f0f0f0;cursor:pointer}.setting-row:last-child{border-bottom:0}.setting-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#fff0f1;font-size:19px;flex-shrink:0}.setting-copy{flex:1}.setting-copy strong{display:block;font-size:14px;color:#252525}.setting-copy small{display:block;color:#777;margin-top:4px;line-height:1.4}.setting-arrow{color:#999;font-size:20px}.settings-note{font-size:12px;color:#777;line-height:1.5;margin:12px 2px}.switch{width:44px;height:25px;accent-color:#e30613}.screen{padding:18px}.screen h2{margin-top:20px}.screen>button:first-child{padding:10px 13px;background:#f3f3f3}
+@media(min-width:431px){.bottom-nav{bottom:14px;border-radius:16px;border:1px solid #eee}}
+
+.login-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:#ff7a00}.login-overlay:before,.login-overlay:after{content:"Techcombank";position:absolute;z-index:0;color:#c40000;font-weight:900;letter-spacing:2px;font-size:clamp(42px,15vw,86px);white-space:nowrap;opacity:.13;transform:rotate(-18deg);pointer-events:none}.login-overlay:before{top:8%;left:-12%}.login-overlay:after{bottom:10%;right:-15%;transform:rotate(-18deg)}.login-card{position:relative;z-index:1;width:min(390px,100%);background:#fff;border-radius:22px;padding:28px 24px;box-shadow:0 14px 50px rgba(110,45,0,.30);border:2px solid rgba(196,0,0,.12)}.login-brand{text-align:center;color:#c40000;font-size:30px;font-weight:900;letter-spacing:1px;margin-bottom:24px}.login-card h2{margin:0 0 8px;text-align:center;font-size:23px;color:#222}.login-card .login-name{text-align:center;font-size:18px;font-weight:700;color:#333;margin:4px 0 22px}.login-card .login-label{display:block;font-weight:700;color:#333;margin-bottom:7px}.login-password-wrap{position:relative}.login-password-wrap input{padding-right:58px;margin-bottom:10px}.login-show-btn{position:absolute;right:8px;top:8px;width:44px;height:42px;padding:0;background:#f3f3f3;color:#555;border-radius:9px;font-size:18px}.login-card .password-hint{text-align:center;color:#777;font-size:12px;line-height:1.45;margin:4px 0 12px}.login-card .message{margin:8px 0 14px}
+</style>
+<style>
+.success-page{text-align:center;padding:10px}.success-icon{width:72px;height:72px;border-radius:50%;background:#e9f8ee;color:#159447;display:flex;align-items:center;justify-content:center;font-size:42px;margin:10px auto}.success-title{font-size:23px;font-weight:800;color:#159447}.badge-ok{display:inline-block;margin:10px 0;padding:5px 10px;border-radius:20px;background:#e9f8ee;color:#159447;font-weight:700;font-size:12px}.tx-detail,.feature-card{background:#f8f8f8;border-radius:14px;padding:14px;margin:15px 0;text-align:left}.tx-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e5e5e5}.tx-row:last-child{border-bottom:0}.tx-row span:first-child{color:#777}.tx-row span:last-child{text-align:right;font-weight:600}.piggy-balance{font-size:28px;font-weight:800;color:#c60010;margin:8px 0}
+</style>
+<style>
+:root{--green:#0b6b4b;--green2:#58a92f;--lime:#b8dc63;--soft:#f0f5f3;--ink:#17231f}
+body{background:#eef3f4;color:var(--ink)}
+.app{background:#eef3f4;box-shadow:none;overflow:hidden}
+.header{display:none}
+.hero{height:230px;background:linear-gradient(180deg,#dcecf1 0%,#c9e4e5 58%,#9dc7bd 100%);position:relative;overflow:hidden;padding:20px 18px 0}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 45%,rgba(12,104,75,.16));pointer-events:none}
+.hero-top{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center}
+.brand-lockup{display:flex;align-items:center;gap:10px}.brand-mark{width:42px;height:42px;border-radius:14px;background:#0a684b;color:#fff;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 6px 18px rgba(0,80,50,.18)}
+.brand-name{font-weight:900;letter-spacing:1px;font-size:21px;color:#084f3b}.brand-sub{font-size:10px;font-weight:800;color:#437465;letter-spacing:1.2px;margin-top:2px}
+.hero-actions{display:flex;gap:8px}.hero-icon{width:44px;height:44px;border-radius:50%;padding:0;background:rgba(255,255,255,.72);color:#0a5e45;font-size:20px;position:relative}.hero-badge{display:none;position:absolute;right:-1px;top:-2px;background:#d52f36;color:#fff;border-radius:10px;font-size:10px;padding:2px 5px}
+.city-art{position:absolute;left:0;right:0;bottom:0;height:125px;opacity:.75}.city-art:before{content:"";position:absolute;left:0;right:0;bottom:0;height:48px;background:linear-gradient(180deg,transparent,#6ea49b)}
+.city-art span,.city-art i,.city-art b,.city-art em,.city-art u{position:absolute;bottom:26px;width:44px;background:#86b8b0;border-radius:5px 5px 0 0;text-decoration:none}.city-art span{left:8%;height:70px}.city-art i{left:25%;height:105px;width:35px}.city-art b{left:43%;height:82px;width:65px}.city-art em{left:65%;height:120px;width:42px}.city-art u{right:8%;height:78px;width:62px}
+.account-card{position:relative;margin:-16px 18px 0;border-radius:22px;background:linear-gradient(135deg,#5aa832,#0d704d);color:#fff;box-shadow:0 12px 28px rgba(15,89,61,.22);overflow:hidden;z-index:3}
+.account-card:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-60px;top:50px;background:rgba(255,255,255,.08)}
+.account-head{display:flex;align-items:center;gap:10px;padding:16px 16px 12px}.avatar{width:46px;height:46px;border-radius:50%;background:#fff;color:#176747;display:grid;place-items:center;font-weight:900;border:2px solid rgba(255,255,255,.7)}.account-name-wrap{flex:1;font-size:18px;font-weight:800}.account-name-wrap small{display:block;font-size:12px;font-weight:500;opacity:.8;margin-top:3px}.mini-action{background:rgba(0,0,0,.16);color:#fff;padding:10px 12px;border-radius:13px;position:relative;z-index:2}
+.account-line{display:flex;align-items:center;gap:10px;padding:8px 16px;font-size:13px;position:relative;z-index:2}.account-line span{opacity:.82}.account-line strong{font-size:17px;letter-spacing:1px;margin-left:auto}.account-line button{background:transparent;color:#fff;padding:3px;font-size:17px}.balance-line{padding-top:4px;padding-bottom:16px}.balance-line strong{font-size:25px}
+.account-actions{display:grid;grid-template-columns:1fr 1fr;background:rgba(0,0,0,.10);border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}.account-actions button{border-radius:0;background:transparent;color:#fff;padding:12px 8px;font-size:20px}.account-actions button+button{border-left:1px solid rgba(255,255,255,.18)}.account-actions span{font-size:13px;margin-left:7px;vertical-align:2px}
+.favorite-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 10px}.favorite-head h2{margin:0;font-size:20px}.favorite-head button{background:transparent;color:#0a664b;padding:8px;font-weight:700}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 20px 16px}.quick-grid button,.service-grid button{background:transparent;padding:12px 5px;color:#15342b;font-size:28px;min-height:88px}.quick-grid span,.service-grid span{display:block;font-size:13px;margin-top:8px;line-height:1.2}
+.service-panel{background:#fff;margin:4px 18px 18px;border-radius:22px;padding:14px 12px;box-shadow:0 6px 20px rgba(0,0,0,.05)}.service-title{font-weight:800;font-size:16px;padding:2px 4px 8px}.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.service-grid button{font-size:23px;min-height:78px}
+.simulation-banner{margin:0 18px 18px;padding:11px 13px;border-radius:14px;background:#e6f1ec;color:#376256;font-size:11px;line-height:1.45}
+.bottom-nav{background:rgba(255,255,255,.96);border-top:1px solid #dfe7e4;box-shadow:0 -7px 22px rgba(0,0,0,.07)}.bottom-nav button.active{color:#0a684b;background:#edf7f2}
+.screen{padding:18px 20px 110px}.screen h2{color:#15352c}
+.setting-group{border:0;border-radius:20px;background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.04);margin:12px 0;overflow:hidden}.setting-row{padding:15px 14px}.setting-icon{background:#f1f8f4;color:#0a684b;border-radius:14px}.setting-copy strong{font-size:14px}.setting-copy small{font-size:12px}
+.section-title{font-size:22px}.settings-note{background:#e8f2ee;padding:12px;border-radius:12px}
+.login-overlay{background:linear-gradient(180deg,#dfeeed,#f4f7f6)}.login-overlay:before,.login-overlay:after{color:#0a684b;opacity:.08;content:"TECHCOMBANK"}.login-card{border:0;border-radius:26px;box-shadow:0 18px 60px rgba(20,70,55,.18);padding:30px 24px}.login-brand{color:#0a684b;font-size:29px}.sim-pill{display:block;width:max-content;margin:-12px auto 16px;padding:5px 9px;border-radius:20px;background:#e8f4ee;color:#0a684b;font-size:10px;font-weight:800;letter-spacing:.7px}.login-card h2{font-size:22px}.login-links{display:flex;justify-content:space-between;gap:8px;margin:4px 0 14px}.login-links button{background:transparent;color:#0a684b;padding:4px;font-size:13px}.login-default{text-align:center;color:#777;font-size:11px;margin-top:10px}.simulation-login-note{text-align:center;color:#7b8984;font-size:10px;line-height:1.45;margin-top:14px}
+.feature-card{background:#fff}.success-icon{background:#e9f7ef;color:#0b754f}
+@media(max-width:360px){.quick-grid{padding-left:12px;padding-right:12px}.account-card{margin-left:12px;margin-right:12px}.favorite-head{padding-left:16px;padding-right:16px}.service-panel{margin-left:12px;margin-right:12px}}
+</style>
+
+<style>
+.settings-page{padding-bottom:110px}.settings-top{display:flex;align-items:center;justify-content:space-between;margin:-4px 0 18px}.settings-top h2{margin:0;font-size:25px}.settings-top button{background:transparent;padding:8px;font-size:22px;color:#164d3d}
+.profile-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#f5f9d9,#e1f7c7);border-radius:22px 22px 0 0;padding:18px 18px 14px}.profile-banner small{display:block;font-size:15px}.profile-banner strong{display:block;font-size:19px;margin-top:3px}.avatar.big{width:58px;height:58px;background:#fff}
+.interface-row{display:flex;align-items:center;justify-content:space-between;background:#f4faeb;padding:12px 16px;border-radius:0 0 22px 22px;margin-bottom:18px}.interface-row button{background:#fff;border:1px solid #d5ded8;padding:10px 16px;color:#155440}
+.settings-section{background:#fff;border-radius:22px;padding:14px 12px;margin:14px 0;box-shadow:0 4px 18px rgba(0,0,0,.045)}.settings-section h3{margin:3px 10px 14px;font-size:19px}.settings-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.settings-tiles button{background:transparent;min-height:104px;padding:10px 5px;color:#163a30;font-size:25px}.settings-tiles button span{display:block;font-size:12px;line-height:1.25;margin-top:8px}.contact-box{display:flex;align-items:center;gap:8px;background:#fff;border-radius:22px;padding:18px;margin:14px 0;font-size:17px}.contact-box b{flex:1}.contact-box button{background:#f0f6f4;border-radius:50%;width:48px;height:48px;padding:0}.version-row{display:flex;justify-content:space-between;color:#333;padding:6px 2px 20px}
+@media(max-width:360px){.settings-tiles{gap:4px}.settings-tiles button{font-size:22px}.settings-tiles button span{font-size:11px}}
+</style>
+
+<style>
+.login-overlay{z-index:9999!important;display:flex!important;align-items:center;justify-content:center;padding:20px}
+.login-card{width:min(430px,100%);max-height:92vh;overflow:auto}
+.login-password-wrap{display:flex;align-items:center;gap:6px}
+.login-password-wrap input{flex:1;margin:0}
+.login-show-btn{width:48px;height:48px;border-radius:12px;background:#eef5f2;color:#0a684b;padding:0}
+.login-links .forgot-btn{font-weight:800;text-decoration:underline}
+</style>
+<style>
+.login-overlay{position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;justify-content:center!important;padding:0!important;background:#eef5f3!important;overflow:auto}
+.login-screen{width:min(520px,100%);min-height:100vh;background:#f4f7f6}
+.login-topbar{height:72px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e3ebe7}
+.back-login,.login-help{width:42px;height:42px;border-radius:50%;padding:0;background:#f0f6f3;color:#09654b;font-size:25px}
+.login-help{font-size:17px;font-weight:900}.login-top-brand{display:flex;align-items:center;gap:9px;color:#075b43}
+.login-top-brand b{display:block;font-size:17px;letter-spacing:.8px}.login-top-brand small{display:block;font-size:9px;color:#71837c}
+.tc-mini{width:38px;height:38px;border-radius:12px;background:#08704e;color:#fff;display:grid;place-items:center;font-weight:900;font-size:22px}
+.login-visual{height:235px;position:relative;overflow:hidden;background:linear-gradient(180deg,#dceef0,#b9dcd9 62%,#83b8a9)}
+.login-building{position:absolute;bottom:0;background:linear-gradient(90deg,#4f958b,#a6d0c8);border-radius:5px 5px 0 0}
+.b1{left:7%;width:40px;height:92px}.b2{left:21%;width:55px;height:125px}.b3{left:40%;width:66px;height:166px}.b4{left:61%;width:52px;height:112px}.b5{right:8%;width:70px;height:92px}
+.login-brand-large{position:absolute;left:20px;bottom:35px;color:#fff;font-weight:900;font-size:25px;letter-spacing:1.5px;text-shadow:0 2px 6px #456}
+.login-sheet{position:relative;margin:-24px 12px 20px;background:#fff;border-radius:26px;padding:24px 22px 20px;z-index:5;box-shadow:0 14px 42px #0f49391f}
+.login-avatar{width:58px;height:58px;border-radius:50%;background:#e8f3ee;color:#0a674b;display:grid;place-items:center;font-weight:900;font-size:20px;margin:-50px auto 10px;border:4px solid #fff}
+.login-welcome{text-align:center;color:#65736e;font-size:14px}.login-user-name{text-align:center;font-weight:900;font-size:20px;color:#17352c}.login-account-small{text-align:center;color:#89948f;font-size:11px;margin:3px 0 18px}
+.login-label{display:block;font-size:13px;font-weight:700;color:#29463d;margin:8px 0 7px}
+.login-password-wrap{display:flex;gap:7px}.login-password-wrap input{flex:1!important;height:50px!important;margin:0!important;border:1px solid #d6e2dd!important;border-radius:14px!important;background:#f9fbfa!important;padding:0 14px!important}
+.login-show-btn{width:50px;height:50px;border-radius:14px;background:#edf6f2;color:#0a674b;padding:0}
+.login-links{display:flex;justify-content:space-between;margin:10px 0 14px}.login-links button{background:transparent;color:#09684c;padding:5px 2px;font-size:12px}.login-links .forgot-btn{font-weight:900;text-decoration:underline}
+.login-submit{width:100%;height:50px;border-radius:14px;font-weight:800}
+.quick-login-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.quick-login-row button{background:#f6faf8;border:1px solid #e5eeea;border-radius:13px;padding:9px 3px;color:#0b644b;font-size:19px}.quick-login-row span{display:block;font-size:10px;color:#566a63;margin-top:4px}
+.login-default{text-align:center;color:#7b8782;font-size:10px;margin-top:13px}.simulation-login-note{margin-top:12px;padding:9px;border-radius:11px;background:#f0f6f3;color:#6d7d77;text-align:center;font-size:9px}
+</style><style id="v24-emergency-login-css">
+#loginOverlay{
+ position:fixed!important;display:flex!important;visibility:visible!important;
+ opacity:1!important;pointer-events:auto!important;z-index:2147483647!important;
+ inset:0!important;align-items:flex-start!important;justify-content:center!important;
+}
+#loginOverlay.hidden{display:flex!important}
+#loginOverlay *{pointer-events:auto!important}
+#loginButton,#toggleLoginPasswordBtn{
+ pointer-events:auto!important;position:relative!important;z-index:2147483648!important;
+ touch-action:manipulation!important;cursor:pointer!important;
+}
+#loginPassword{pointer-events:auto!important;position:relative!important;z-index:2147483648!important}
+</style><style id="v24-login-overlay-fix">
+/* Fix: khi đăng nhập thành công, lớp phủ phải thực sự biến mất để không chặn thao tác. */
+#loginOverlay.hidden { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+#loginOverlay:not(.hidden) { visibility: visible; pointer-events: auto; }
+</style>
+<style id="v25-login-freeze-fix">
+html, body { min-height:100%; }
+#loginOverlay { overflow-y:auto !important; -webkit-overflow-scrolling:touch; touch-action:pan-y; }
+#loginOverlay .login-screen { max-height:none; }
+#loginOverlay.hidden, #loginOverlay[data-sim-closed="1"] { display:none !important; visibility:hidden !important; pointer-events:none !important; }
+</style>
+</head>
+<body>
+<div id="loginOverlay" class="login-overlay" aria-modal="true" role="dialog">
+<div class="login-screen">
+<div class="login-topbar">
+<button class="back-login" type="button" onclick="alert('Đây là màn hình đăng nhập của game mô phỏng.')">‹</button>
+<div class="login-top-brand"><div class="tc-mini">T</div><div><b>TECHCOMBANK</b><small>Digital Banking • Mô phỏng</small></div></div>
+<button class="login-help" type="button" onclick="showLoginOptions()">?</button>
+</div>
+<div class="login-visual">
+<div class="login-building b1"></div><div class="login-building b2"></div><div class="login-building b3"></div><div class="login-building b4"></div><div class="login-building b5"></div>
+<div class="login-brand-large">TECHCOMBANK</div>
+</div>
+<div class="login-sheet">
+<div class="login-avatar" id="loginAvatar">BV</div>
+<div class="login-welcome">Xin chào,</div>
+<div class="login-user-name" id="loginUserName">Bùi Văn Việt Hùng</div>
+<div class="login-account-small">Tài khoản mô phỏng</div>
+<label class="login-label" for="loginPassword">Mật khẩu đăng nhập</label>
+<div class="login-password-wrap">
+<input id="loginPassword" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu">
+<button id="toggleLoginPasswordBtn" class="login-show-btn" type="button" onclick="(function(){var i=document.getElementById('loginPassword');if(i)i.type=i.type==='password'?'text':'password'})()">👁</button>
+</div>
+<div class="login-links">
+<button class="forgot-btn" type="button" onclick="(function(){var otp=prompt('Nhập mã OTP mô phỏng (123456):');if(otp!=='123456'){if(otp!==null)alert('❌ OTP không đúng.');return}var pw=prompt('Nhập mật khẩu mới:');if(!pw){return}try{localStorage.setItem('TECHCOMBANK_SIM_PASSWORD_V24',pw)}catch(e){}alert('✅ Đã đổi mật khẩu. Hãy đăng nhập lại.');location.reload()})()">Quên mật khẩu?</button>
+<button type="button" onclick="showLoginOptions()">Tùy chọn đăng nhập</button>
+</div>
+<button id="loginButton" class="primary login-submit" type="button" onclick="(function(){var i=document.getElementById('loginPassword'),s=document.getElementById('loginStatus'),o=document.getElementById('loginOverlay'),p=(i?String(i.value||''):'');if(p!=='123456'){if(s){s.classList.remove('hidden');s.style.display='block';s.textContent='❌ Mật khẩu không đúng. Hãy nhập 123456.';}return false;}if(s){s.classList.add('hidden');s.style.display='none';}if(o){o.style.display='none';o.classList.add('hidden');}var h=document.getElementById('home'),sc=document.getElementById('screen');if(h)h.classList.remove('hidden');if(sc)sc.classList.add('hidden');return false})()">Đăng nhập</button>
+<div id="loginStatus" class="message hidden"></div>
+<div class="quick-login-row">
+<button type="button" onclick="alert('✅ Vân tay mô phỏng đã xác thực.')">◉<span>Vân tay</span></button>
+<button type="button" onclick="alert('✅ Face ID mô phỏng đã xác thực.')">◎<span>Face ID</span></button>
+<button type="button" onclick="(function(){var otp=prompt('Nhập mã OTP mô phỏng (123456):');if(otp!=='123456'){if(otp!==null)alert('❌ OTP không đúng.');return}var pw=prompt('Nhập mật khẩu mới:');if(!pw){return}try{localStorage.setItem('TECHCOMBANK_SIM_PASSWORD_V24',pw)}catch(e){}alert('✅ Đã đổi mật khẩu. Hãy đăng nhập lại.');location.reload()})()">🔑<span>Khôi phục</span></button>
+</div>
+<div class="login-default">Mật khẩu mặc định: <b>123456</b></div>
+<div class="simulation-login-note">⚠️ <b>GAME MÔ PHỎNG</b> — không kết nối ngân hàng thật.</div><button type="button" style="width:100%;margin-top:8px;background:#f7f7f7;color:#59655f;font-size:11px" onclick="storeRemove(BANK_PASSWORD_KEY);storeSet(BANK_PASSWORD_KEY,'123456');alert('✅ Đã đặt lại mật khẩu về 123456.');showLogin()">Xóa dữ liệu đăng nhập cũ</button>
+</div></div></div><div class="app">
+<header class="header"><div class="home-top"><div><div class="greeting" style="margin-top:0;font-size:16px;font-weight:500">Xin chào</div><div id="greetingName" style="font-size:22px;font-weight:700;margin-top:4px">Bùi Văn Việt Hùng</div></div><button class="bell-btn" type="button" onclick="showNotifications()" aria-label="Lịch sử giao dịch">🔔<span id="bellBadge" class="bell-badge">0</span></button></div><div class="simulation">⚠️ GIAO DIỆN MÔ PHỎNG - KHÔNG PHẢI NGÂN HÀNG THẬT</div><div class="balance"><div class="account-number" style="margin:0 0 12px"><small>Tài khoản</small><strong id="accountNumber">1706201412</strong></div><div class="balance-top"><small>Số dư hiện tại</small><button class="balance-eye" id="balanceEye" type="button" onclick="toggleBalance()" aria-label="Ẩn hoặc hiện số dư">👁️</button></div><strong id="balance">50.000.000 VND</strong></div></header>
+<div id="home">
+  <div class="hero">
+    <div class="hero-top">
+      <div class="brand-lockup">
+        <div class="brand-mark">T</div>
+        <div>
+          <div class="brand-name">TECHCOMBANK</div>
+          <div class="brand-sub">DIGITAL • MÔ PHỎNG</div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-icon" onclick="showNotifications()" aria-label="Thông báo">🔔<span id="bellBadge" class="hero-badge">0</span></button>
+        <button class="hero-icon" onclick="lockGame()" aria-label="Khóa">⏻</button>
+      </div>
+    </div>
+    <div class="city-art" aria-hidden="true"><span></span><i></i><b></b><em></em><u></u></div>
+  </div>
+
+  <div class="account-card">
+    <div class="account-head">
+      <div class="avatar" id="avatarInitial">BV</div>
+      <div class="account-name-wrap">
+        <div id="greetingName">Bùi Văn Việt Hùng</div>
+        <small>Hạng Tiêu chuẩn</small>
+      </div>
+      <button class="mini-action" onclick="showAccountQR()">▦ QR</button>
+    </div>
+    <div class="account-line"><span>Ngân hàng mô phỏng</span><strong id="simBankLabel" style="font-size:14px;letter-spacing:0">Techcombank</strong></div>
+    <div class="account-line"><span>Số tài khoản</span><strong id="accountNumber">1706201412</strong><button onclick="copyAccount()">▣</button></div>
+    <div class="account-line balance-line"><span>Số dư hiện tại</span><strong id="balance">50.000.000 VND</strong><button id="balanceEye" onclick="toggleBalance()">👁️</button></div>
+    <div class="account-actions">
+      <button onclick="showNotifications()">◷<span>Lịch sử giao dịch</span></button>
+      <button onclick="showAccounts()">▣<span>Tài khoản & Thẻ</span></button>
+    </div>
+  </div>
+
+  <div class="favorite-head"><h2>Chức năng ưa thích</h2><button onclick="showAllServices()">⌕ Tìm kiếm</button></div>
+  <div class="quick-grid">
+    <button onclick="showTransfer()">⇄<span>Chuyển tiền</span></button>
+    <button onclick="showQR()">▦<span>Quét QR</span></button>
+    <button onclick="showDeposit()">＋<span>Nạp tiền</span></button>
+    <button onclick="showPiggy()">🐷<span>Mở tiết kiệm</span></button>
+    <button onclick="showPhone()">▤<span>Nạp điện thoại</span></button>
+    <button onclick="showMovie()">🎟<span>Đặt vé xem phim</span></button>
+  </div>
+
+  <div class="service-panel">
+    <div class="service-title">Dịch vụ khác</div>
+    <div class="service-grid">
+      <button onclick="showFlight()">✈️<span>Vé máy bay</span></button>
+      <button onclick="showTaxi()">🚕<span>Đặt Taxi</span></button>
+      <button onclick="showTrain()">🚆<span>Vé tàu hỏa</span></button>
+      <button onclick="showCoach()">🚌<span>Vé xe khách</span></button>
+      <button onclick="showLoan()">💳<span>Vay tiền</span></button>
+      <button onclick="showSettings()">⚙️<span>Cài đặt</span></button>
+    </div>
+  </div>
+
+  <div class="simulation-banner">⚠️ <b>TECHCOMBANK GAME MÔ PHỎNG</b> — Số dư và giao dịch chỉ tồn tại trong trò chơi.</div>
+</div>
+<div id="screen" class="screen hidden"></div>
+<nav class="bottom-nav" aria-label="Điều hướng chính"><button id="navHome" class="active" onclick="navigate('home')"><span>⌂</span>Trang chủ</button><button id="navTransactions" onclick="navigate('transactions')"><span>⇄</span>Giao dịch</button><button id="navSettings" onclick="navigate('settings')"><span>⚙</span>Cài đặt</button></nav>
+<script async src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<script>
+/* ===== LƯU DỮ LIỆU GAME MÔ PHỎNG ===== */
+const TB_SAVE_KEY="techcombank_simulation_v19";
+function simLoad(){
+  try{return JSON.parse(localStorage.getItem(TB_SAVE_KEY)||"{}")}catch(e){return {}}
+}
+function simSave(){
+  try{
+    localStorage.setItem(TB_SAVE_KEY,JSON.stringify({
+      balance: typeof balance!=="undefined"?balance:50000000,
+      simUserName: typeof simUserName!=="undefined"?simUserName:"Bùi Văn Việt Hùng",
+      simAccountNumber: typeof simAccountNumber!=="undefined"?simAccountNumber:"1706201412",
+      password: localStorage.getItem(typeof BANK_PASSWORD_KEY!=="undefined"?BANK_PASSWORD_KEY:"bank_sim_password")||"123456",
+      otp: typeof currentOTP!=="undefined"?currentOTP:"123456",
+      history: typeof history!=="undefined"?history:[],
+      piggyBalance: localStorage.getItem("piggyBalance")||"0",
+      piggyLastAt: localStorage.getItem("piggyLastAt")||"0",
+      phone: typeof simPhone!=="undefined"?simPhone:"",
+      savedAt:Date.now()
+    }));
+  }catch(e){}
+}
+function simRestore(){
+  const d=simLoad();
+  if(d.password && typeof BANK_PASSWORD_KEY!=="undefined") localStorage.setItem(BANK_PASSWORD_KEY,d.password);
+  if(d.otp) { try{currentOTP=d.otp}catch(e){} }
+  if(d.balance!==undefined) { try{balance=Number(d.balance)}catch(e){} }
+  if(Array.isArray(d.history)) { try{history.splice(0,history.length,...d.history)}catch(e){} }
+  if(d.piggyBalance!==undefined) localStorage.setItem("piggyBalance",String(d.piggyBalance));
+  if(d.piggyLastAt!==undefined) localStorage.setItem("piggyLastAt",String(d.piggyLastAt));
+}
+window.addEventListener("beforeunload",simSave);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)simSave()});
+
+/* Storage an toàn cho Samsung Internet / file:// / content:// */
+const memoryStore={};
+function storeGet(k){try{return window.localStorage.getItem(k)}catch(e){return Object.prototype.hasOwnProperty.call(memoryStore,k)?memoryStore[k]:null}}
+function storeSet(k,v){try{window.localStorage.setItem(k,String(v))}catch(e){memoryStore[k]=String(v)}}
+function storeRemove(k){try{window.localStorage.removeItem(k)}catch(e){delete memoryStore[k]}}
+let balance=Number(storeGet("simBalance")||50000000);
+let simAccountNumber=storeGet("simAccountNumber")||"1706201412";
+let currentOTP=storeGet("simOTP")||"123456";
+let history=[];
+try{
+  const rawHistory=storeGet("simHistory");
+  history=rawHistory?JSON.parse(rawHistory):[];
+  if(!Array.isArray(history)) history=[];
+}catch(e){
+  history=[];
+  storeSet("simHistory","[]");
+}
+let balanceVisible=storeGet("simBalanceVisible")!=="0";
+const BANKS=["Vietcombank","Agribank","BIDV","VietinBank","Techcombank","MB Bank","ACB","VPBank","TPBank","Sacombank","HDBank","SHB","VIB","MSB","OCB","Eximbank","SeABank","Nam A Bank","Bac A Bank","VietABank","ABBank","LPBank","PVcomBank","KienlongBank","NCB","Co-opBank","BaoViet Bank","VietBank","CBBank","OceanBank","SCB","UOB","HSBC","Standard Chartered","Citi","Zalopay","MoMo"];
+const BANK_OPTIONS=BANKS.map(b=>`<option value="${b}">${b}</option>`).join("");
+function normalizeBank(v){
+  const s=String(v||"").trim().toLowerCase().replace(/[^a-z0-9]/g,"");
+  const aliases={
+    vietcombank:"Vietcombank",vcb:"Vietcombank",
+    agribank:"Agribank",
+    bidv:"BIDV",vietinbank:"VietinBank",ctg:"VietinBank",
+    techcombank:"Techcombank",tcb:"Techcombank",
+    mbbank:"MB Bank",mb:"MB Bank",
+    acb:"ACB",vpbank:"VPBank",tpbank:"TPBank",
+    sacombank:"Sacombank",stb:"Sacombank",
+    hdbank:"HDBank",hdb:"HDBank",shb:"SHB",vib:"VIB",msb:"MSB",ocb:"OCB",
+    eximbank:"Eximbank",seabank:"SeABank",namabank:"Nam A Bank",baca:"Bac A Bank",
+    vietabank:"VietABank",abbank:"ABBank",lpbank:"LPBank",pvcombank:"PVcomBank",
+    kienlongbank:"KienlongBank",ncb:"NCB",coopbank:"Co-opBank",baovietbank:"BaoViet Bank",
+    vietbank:"VietBank",cbbank:"CBBank",oceanbank:"OceanBank",scb:"SCB",
+    uob:"UOB",hsbc:"HSBC",standardchartered:"Standard Chartered",citi:"Citi",
+    zalopay:"Zalopay",momo:"MoMo"
+  };
+  return aliases[s]||"";
+}
+
+const BANK_PASSWORD_KEY="simBankPassword_v22";
+if(!storeGet(BANK_PASSWORD_KEY)) storeSet(BANK_PASSWORD_KEY,"123456");
+let simUserName=storeGet("simUserName")||"BUI VAN SANG";
+let simPhone=storeGet("simPhone")||"";
+let simLanguage=storeGet("simLanguage")||"Tiếng Việt";
+let notificationsOn=storeGet("simNotifications")!=="0";
+function getBankPassword(){
+  let pw=storeGet(BANK_PASSWORD_KEY);
+  if(pw===null || pw===""){
+    pw="123456";
+    storeSet(BANK_PASSWORD_KEY,pw);
+  }
+  return String(pw);
+}
+function showLogin(){
+  const overlay=document.getElementById("loginOverlay");
+  const screen=document.getElementById("screen");
+  const home=document.getElementById("home");
+
+  if(screen) screen.classList.add("hidden");
+  if(home) home.classList.remove("hidden");
+
+  if(overlay){
+    overlay.classList.remove("hidden");
+    overlay.style.display="flex";
+  }
+
+  const input=document.getElementById("loginPassword");
+  if(input){
+    input.value="";
+    input.focus();
+  }
+  const n=document.getElementById("loginUserName");
+  if(n) n.innerText=simUserName||"Người dùng mô phỏng";
+  const s=document.getElementById("loginStatus");
+  if(s){s.classList.add("hidden");s.innerText="";}
+}
+function escapeHTML(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));}
+function formatMoney(n){return Number(n||0).toLocaleString("vi-VN")+" VND";}
+function showScreen(html){
+  const home=document.getElementById("home"),screen=document.getElementById("screen");
+  if(home)home.classList.add("hidden");
+  if(screen){screen.innerHTML=html;screen.classList.remove("hidden");}
+}
+function unlockGame(){
+  const input=document.getElementById("loginPassword"), status=document.getElementById("loginStatus");
+  const pw=input?input.value:"";
+  if(pw!==getBankPassword()){
+    if(status){status.classList.remove("hidden");status.innerHTML="❌ Mật khẩu không đúng. Mật khẩu mặc định của game là <b>123456</b> nếu bạn chưa đổi.";}
+    return;
+  }
+  const overlay=document.getElementById("loginOverlay");
+  if(overlay){overlay.classList.add("hidden");overlay.style.display="none";}
+  const home=document.getElementById("home");
+  const screen=document.getElementById("screen");
+  if(home)home.classList.remove("hidden");
+  if(screen)screen.classList.add("hidden");
+  try{updateHeaderInfo();updateBalance();}catch(e){}
+}
+function toggleLoginPassword(){
+  const input=document.getElementById("loginPassword"),btn=document.getElementById("toggleLoginPasswordBtn");
+  if(!input)return;
+  const show=input.type==="password";input.type=show?"text":"password";
+  if(btn)btn.textContent=show?"🙈":"👁";
+}
+function showForgotPassword(){
+  const sheet=document.querySelector("#loginOverlay .login-sheet");
+  if(!sheet)return;
+  sheet.innerHTML=`<div class="login-avatar">🔑</div>
+  <h2 style="text-align:center;color:#17352c;margin:8px 0">Quên mật khẩu</h2>
+  <p style="text-align:center;color:#71807a;font-size:13px">Nhập số điện thoại mô phỏng để nhận OTP.</p>
+  <label class="login-label">Số điện thoại</label>
+  <input id="forgotPhone" inputmode="tel" placeholder="Nhập số điện thoại" style="width:100%;height:50px;border:1px solid #d6e2dd;border-radius:14px;padding:0 14px">
+  <button class="primary login-submit" style="margin-top:14px" type="button" onclick="sendForgotOTP()">Gửi OTP</button>
+  <button type="button" style="width:100%;margin-top:8px;background:#eef5f2;color:#09684c" onclick="showLogin()">← Quay lại đăng nhập</button>
+  <div class="simulation-login-note">OTP mô phỏng mặc định: <b>123456</b></div>`;
+}
+function sendForgotOTP(){
+  const phone=(document.getElementById("forgotPhone")||{}).value||"";
+  if(!phone.trim()){alert("Vui lòng nhập số điện thoại.");return;}
+  const sheet=document.querySelector("#loginOverlay .login-sheet");
+  sheet.innerHTML=`<div class="login-avatar">🔐</div>
+  <h2 style="text-align:center;color:#17352c;margin:8px 0">Xác nhận OTP</h2>
+  <p style="text-align:center;color:#71807a;font-size:13px">Nhập OTP mô phỏng đã gửi đến số điện thoại.</p>
+  <input id="forgotOtp" inputmode="numeric" maxlength="6" placeholder="Nhập OTP" style="width:100%;height:50px;border:1px solid #d6e2dd;border-radius:14px;padding:0 14px">
+  <input id="newPassword" type="password" placeholder="Mật khẩu mới (tối thiểu 4 ký tự)" style="width:100%;height:50px;border:1px solid #d6e2dd;border-radius:14px;padding:0 14px;margin-top:9px">
+  <button class="primary login-submit" style="margin-top:14px" type="button" onclick="resetForgotPassword()">Đặt lại mật khẩu</button>
+<button type="button" style="width:100%;margin-top:8px;background:#fff3f3;color:#b4232c" onclick="resetPasswordToDefault()">Đặt lại về 123456</button>
+  <button type="button" style="width:100%;margin-top:8px;background:#eef5f2;color:#09684c" onclick="showLogin()">← Quay lại đăng nhập</button>
+  <div class="simulation-login-note">OTP mô phỏng: <b>123456</b></div>`;
+}
+function resetForgotPassword(){
+  const otp=(document.getElementById("forgotOtp")||{}).value||"";
+  const pw=(document.getElementById("newPassword")||{}).value||"";
+  if(String(otp).trim()!=="123456"){alert("❌ OTP không đúng. OTP mô phỏng cố định là 123456.");return;}
+  if(pw.length<4){alert("Mật khẩu mới phải có ít nhất 4 ký tự.");return;}
+  storeSet(BANK_PASSWORD_KEY,pw);alert("✅ Đổi mật khẩu thành công.");showLogin();
+}
+function resetPasswordToDefault(){
+  storeSet(BANK_PASSWORD_KEY,"123456");
+  try{simSave()}catch(e){}
+  alert("✅ Đã đặt mật khẩu về 123456.");
+  showLogin();
+}
+function showLoginOptions(){alert("Tùy chọn đăng nhập mô phỏng:\n\n• Mật khẩu\n• Vân tay\n• Face ID\n• Khôi phục bằng OTP");}
+function showInfoCard(title,body){
+  showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>${title}</h2><div class="feature-card">${body}</div>`);
+}
+function showPaymentRequests(){showInfoCard("👤 Quản lý đề nghị thanh toán","<b>Đề nghị thanh toán mô phỏng</b><p>Chưa có đề nghị chờ xử lý.</p><button onclick=\"alert('Đã tạo đề nghị thanh toán mô phỏng.')\">Tạo đề nghị</button>")}
+function showNotificationSettings(){showInfoCard("🔔 Quản lý thông báo","<p>Thông báo giao dịch: "+(notificationsOn?"Đang bật":"Đang tắt")+"</p><button onclick=\"toggleNotifications();showNotificationSettings()\">Bật/Tắt thông báo</button>")}
+function showAuthSync(){showInfoCard("▣ Đồng bộ hình thức xác nhận","<p>OTP SMS: <b>Đang bật</b></p><p>OTP trong game: <b>Đang bật</b></p><button onclick=\"alert('✅ Đã đồng bộ hình thức xác nhận mô phỏng.')\">Đồng bộ</button>")}
+function showEmailSettings(){showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>✉️ Quản lý email</h2><label>Email mô phỏng</label><input id="simEmail" value="${escapeHTML(storeGet("simEmail")||"")}"><button class="primary" onclick="storeSet('simEmail',document.getElementById('simEmail').value.trim());alert('✅ Đã lưu email mô phỏng.');showSettings()">Lưu</button>`)}
+function showDefaultAccount(){showInfoCard("💵 Tài khoản mặc định","<p>Đang chọn: <b>"+escapeHTML(simAccountNumber)+"</b></p><button onclick=\"alert('✅ Đã đặt tài khoản hiện tại làm tài khoản mặc định.')\">Đặt làm mặc định</button>")}
+function showLoginChannels(){showInfoCard("▣ Quản lý đăng nhập kênh","<p>Ứng dụng: <b>Đang bật</b></p><p>Web: <b>Mô phỏng</b></p><button onclick=\"alert('✅ Đã lưu cấu hình kênh đăng nhập mô phỏng.')\">Lưu cấu hình</button>")}
+function showReviewAlerts(){showInfoCard("❓ Quản lý thông báo tra soát","<p>Tra soát giao dịch: <b>Đang bật</b></p><button onclick=\"alert('Đã bật thông báo tra soát mô phỏng.')\">Bật thông báo</button>")}
+function showWallpaper(){showInfoCard("🖼️ Cài đặt hình nền","<p>Chủ đề hiện tại: <b>TECHCOMBANK xanh</b></p><button onclick=\"document.body.classList.toggle('wallpaper-soft');alert('✅ Đã đổi nền mô phỏng.')\">Đổi hình nền</button>")}
+function showSignature(){showInfoCard("✍️ Chữ ký số","<p>Trạng thái: <b>Chưa đăng ký</b></p><button onclick=\"alert('✅ Đã mô phỏng kích hoạt chữ ký số.')\">Kích hoạt</button>")}
+function showVoiceOtp(){showInfoCard("📣 Voice OTP","<p>Voice OTP mô phỏng dùng để đọc mã xác nhận.</p><button onclick=\"alert('Mã OTP mô phỏng hiện tại là: '+currentOTP)\">Đọc OTP</button>")}
+function showFontSize(){showInfoCard("Aa Thay đổi cỡ chữ","<p>Chọn cỡ chữ giao diện:</p><button onclick=\"document.body.style.fontSize='14px'\">Nhỏ</button> <button onclick=\"document.body.style.fontSize='16px'\">Tiêu chuẩn</button> <button onclick=\"document.body.style.fontSize='18px'\">Lớn</button>")}
+function showGuide(){showInfoCard("📖 Hướng dẫn sử dụng","<p>Chọn chức năng ở trang chủ để mở luồng mô phỏng. Giao dịch chuyển tiền/QR yêu cầu OTP mô phỏng.</p>")}
+function showFAQ(){showInfoCard("❔ Câu hỏi thường gặp","<p><b>Quên mật khẩu?</b> Dùng OTP mô phỏng để đặt lại.</p><p><b>Giao dịch có thật không?</b> Không. Tất cả chỉ là dữ liệu trong game.</p>")}
+function showSafeTransactions(){showInfoCard("🛡️ Giao dịch an toàn","<p>Kiểm tra tên người nhận, số tài khoản và số tiền trước khi xác nhận.</p>")}
+function showExchange(){showInfoCard("↔ Tỷ giá","<p>USD/VND (mô phỏng): 25.000</p><p>EUR/VND (mô phỏng): 29.000</p>")}
+function showInterest(){showInfoCard("% Lãi suất","<p>Ống heo: cơ chế sinh lời mô phỏng theo bản game.</p>")}
+function showInterestCalc(){showInfoCard("🧮 Tính toán lãi suất",`<label>Số tiền</label><input id="icAmount" type="number" value="1000000"><label>Số ngày</label><input id="icDays" type="number" value="30"><button class="primary" onclick="calcInterest()">Tính</button><div id="icResult" class="message"></div>`)}
+function calcInterest(){const a=Number(document.getElementById("icAmount").value),d=Number(document.getElementById("icDays").value),r=a*0.002*d;document.getElementById("icResult").innerText="Lãi mô phỏng: "+formatMoney(Math.round(r))}
+function showCloseAccount(){showInfoCard("⊘ Đóng tài khoản","<p>Đây là thao tác giả lập. Không xóa tài khoản ngân hàng thật.</p><button onclick=\"alert('Đã ghi nhận yêu cầu đóng tài khoản mô phỏng.')\">Gửi yêu cầu</button>")}
+function showContact(){showInfoCard("☎ Liên hệ TECHCOMBANK mô phỏng","<p>Hỗ trợ trong game: 1900 0000</p><p>Email mô phỏng: support@example.local</p>")}
+function showSettings(){
+  showScreen(`<div class="settings-page">
+  <div class="settings-top"><button onclick="backHome()">←</button><h2>Cài đặt</h2><button onclick="lockGame()">⏻</button></div>
+  <div class="profile-banner"><div class="avatar big" id="settingsAvatar">BV</div><div><small>Xin chào,</small><strong>${escapeHTML(simUserName)}</strong></div></div>
+  <div class="interface-row"><span>🎨 Giao diện: <b>Tiêu chuẩn</b></span><button onclick="showWallpaper()">Thay đổi</button></div>
+
+  <div class="settings-section"><h3>Bảo mật</h3>
+    <div class="settings-tiles">
+      <button onclick="showChangeBankPassword()">🔑<span>Đổi mật khẩu<br>đăng nhập</span></button>
+      <button onclick="alert('✅ Đã mở xác thực sinh trắc học mô phỏng.')">◉<span>Cài đặt<br>vân tay</span></button>
+      <button onclick="showProfileSettings()">📱<span>Số điện thoại<br>SMS OTP</span></button>
+      <button onclick="showVoiceOtp()">📣<span>Cấp mật khẩu<br>Voice OTP</span></button>
+      <button onclick="showChangeOTP()">🔐<span>Đổi mã<br>OTP</span></button>
+      <button onclick="alert('✅ FacePay mô phỏng đã được kích hoạt.')">◎<span>Quản lý<br>FacePay</span></button>
+    </div>
+  </div>
+
+  <div class="settings-section"><h3>Quản lý và thiết lập</h3>
+    <div class="settings-tiles">
+      <button onclick="showPaymentRequests()">👤<span>Quản lý đề nghị<br>thanh toán</span></button>
+      <button onclick="showNotificationSettings()">☁️<span>Quản lý<br>thông báo</span></button>
+      <button onclick="showAuthSync()">▣<span>Đồng bộ hình thức<br>xác nhận</span></button>
+      <button onclick="showEmailSettings()">✉️<span>Quản lý<br>email</span></button>
+      <button onclick="showDefaultAccount()">＄<span>Tài khoản<br>mặc định</span></button>
+      <button onclick="showLoginChannels()">▤<span>Quản lý đăng nhập<br>kênh</span></button>
+      <button onclick="showReviewAlerts()">❔<span>Quản lý thông báo<br>tra soát</span></button>
+      <button onclick="showWallpaper()">🖼️<span>Cài đặt<br>hình nền</span></button>
+      <button onclick="showSignature()">✍️<span>Chữ ký số</span></button>
+      <button onclick="showVoiceOtp()">📣<span>Voice OTP</span></button>
+    </div>
+  </div>
+
+  <div class="settings-section"><h3>Dữ liệu game mô phỏng</h3>
+    <div class="settings-tiles">
+      <button onclick="simSave();alert('✅ Đã lưu mật khẩu, số dư, OTP và dữ liệu giao dịch vào bộ nhớ của trình duyệt.')">💾<span>Sao lưu<br>dữ liệu</span></button>
+      <button onclick="simRestore();updateBalance();alert('✅ Đã khôi phục dữ liệu mô phỏng.')">↻<span>Khôi phục<br>dữ liệu</span></button>
+    </div>
+  </div>
+  <div class="settings-section"><h3>Thông tin hỗ trợ</h3>
+    <div class="settings-tiles">
+      <button onclick="showFontSize()">↗<span>Thay đổi<br>cỡ chữ</span></button>
+      <button onclick="showGuide()">📖<span>Hướng dẫn<br>sử dụng</span></button>
+      <button onclick="showFAQ()">?<span>Câu hỏi<br>thường gặp</span></button>
+      <button onclick="showSafeTransactions()">🛡️<span>Giao dịch<br>an toàn</span></button>
+      <button onclick="showExchange()">↔<span>Tỷ giá</span></button>
+      <button onclick="showInterest()">%<span>Lãi suất</span></button>
+      <button onclick="showInterestCalc()">🧮<span>Tính toán<br>lãi suất</span></button>
+      <button onclick="showCloseAccount()">⊘<span>Đóng tài khoản</span></button>
+    </div>
+  </div>
+  <div class="contact-box"><b>Liên hệ với TECHCOMBANK</b><button onclick="showContact()">☎</button><button onclick="showContact()">💬</button></div>
+  <div class="version-row">Phiên bản sử dụng 15.0.0 <span>Chia sẻ ⤴</span></div>
+  <p class="settings-note">⚠️ TECHCOMBANK GAME MÔ PHỎNG — không phải ứng dụng ngân hàng chính thức và không thực hiện giao dịch tiền thật.</p>
+  </div>`);
+}
+
+function showChangeOTP(){
+  showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>🔐 Đổi mã OTP mô phỏng</h2><p style="color:#687586;line-height:1.5">Để bảo vệ thiết lập trong trò chơi, bạn cần nhập đúng mã OTP hiện tại trước khi đặt mã mới.</p><label>Mã OTP cũ</label><input id="otpOld" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="Nhập mã OTP hiện tại"><label>Mã OTP mới</label><input id="otpNew" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="Nhập mã OTP mới"><label>Nhập lại mã OTP mới</label><input id="otpNewConfirm" type="password" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="Nhập lại mã OTP mới"><button class="primary" onclick="saveChangedOTP()">Xác nhận đổi OTP</button><div class="message">⚠️ OTP chỉ dùng trong game mô phỏng, không phải mã OTP của ngân hàng thật.</div>`);
+}
+function saveChangedOTP(){
+  const old=(document.getElementById('otpOld')||{}).value||'', next=(document.getElementById('otpNew')||{}).value||'', confirm=(document.getElementById('otpNewConfirm')||{}).value||'';
+  if(old!==String(currentOTP)){alert('❌ Mã OTP cũ không đúng.');return}
+  if(!/^\d{6}$/.test(next)){alert('❌ Mã OTP mới phải gồm đúng 6 chữ số.');return}
+  if(next!==confirm){alert('❌ Hai mã OTP mới không trùng khớp.');return}
+  currentOTP=next;storeSet('simOTP',next);
+  try{if(typeof simSave==='function')simSave()}catch(e){}
+  alert('✅ Đã đổi mã OTP mô phỏng thành công. Các thao tác xác nhận tiếp theo sẽ dùng mã mới.');showSettings();
+}
+function showProfileSettings(){showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>👤 Thông tin cá nhân</h2><label>Họ và tên</label><input id="profileName" value="${escapeHTML(simUserName)}"><label>Số điện thoại mô phỏng</label><input id="profilePhone" inputmode="tel" value="${escapeHTML(simPhone)}" placeholder="Nhập số điện thoại"><label>Số tài khoản mô phỏng</label><input id="profileAccount" inputmode="numeric" maxlength="20" value="${escapeHTML(simAccountNumber)}" placeholder="Nhập 6–20 chữ số"><small style="display:block;color:#777;margin:-8px 0 14px">Số tài khoản này sẽ hiển thị bên dưới số dư ở trang chủ.</small><button class="primary" onclick="saveProfile()">Lưu thay đổi</button>`)}
+function saveProfile(){simUserName=document.getElementById("profileName").value.trim()||"Người dùng mô phỏng";simPhone=document.getElementById("profilePhone").value.trim();const newAccount=document.getElementById("profileAccount").value.trim();if(!/^\d{6,20}$/.test(newAccount)){alert("❌ Số tài khoản phải gồm 6–20 chữ số.");return}simAccountNumber=newAccount;storeSet("simUserName",simUserName);storeSet("simPhone",simPhone);storeSet("simAccountNumber",simAccountNumber);updateHeaderInfo();alert("✅ Đã lưu thông tin trong trò chơi.");showSettings()}
+function showDevices(){showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>📱 Đăng nhập và thiết bị</h2><div class="message">Thiết bị hiện tại: <b>Điện thoại này</b><br>Trạng thái: <b>Đang hoạt động</b><br>Lần hoạt động: vừa mới đây</div><button class="primary" onclick="alert('✅ Đã mô phỏng đăng xuất khỏi thiết bị khác.')">Đăng xuất thiết bị khác</button>`)}
+function toggleNotifications(fromInput){if(!fromInput){notificationsOn=!notificationsOn}else{notificationsOn=!notificationsOn}storeSet("simNotifications",notificationsOn?"1":"0");if(document.getElementById("notificationState"))document.getElementById("notificationState").innerText=notificationsOn?"Đang bật":"Đang tắt";if(document.querySelector(".switch"))document.querySelectorAll(".switch")[0].checked=notificationsOn}
+function showLanguageSettings(){showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>🌐 Ngôn ngữ</h2><label>Ngôn ngữ giao diện</label><select id="languageSelect"><option ${simLanguage==='Tiếng Việt'?'selected':''}>Tiếng Việt</option><option ${simLanguage==='English'?'selected':''}>English</option></select><button class="primary" onclick="saveLanguage()">Lưu ngôn ngữ</button>`)}
+function saveLanguage(){simLanguage=document.getElementById("languageSelect").value;storeSet("simLanguage",simLanguage);alert("✅ Đã lưu ngôn ngữ mô phỏng.");showSettings()}
+function toggleBalanceSetting(){balanceVisible=!balanceVisible;updateBalance();showSettings()}
+function showHelp(){showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>❓ Trợ giúp</h2><div class="message"><b>Quét QR:</b> chọn ảnh QR, hệ thống thử đọc dữ liệu QR và OCR phần chữ để lấy ngân hàng, tên và số tài khoản.<br><br><b>Chuyển tiền/Thanh toán:</b> nhập thông tin, số tiền và OTP mô phỏng.<br><br><b>Lịch sử:</b> giao dịch chỉ lưu trong phiên trò chơi.</div>`)}
+function showAppInfo(){showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>ℹ️ Thông tin ứng dụng</h2><div class="message"><b>Techcombank UI Game</b><br>Phiên bản mô phỏng 3.0<br><br>Không phải ứng dụng chính thức của Techcombank. Không kết nối tài khoản ngân hàng và không chuyển tiền thật.</div>`)}
+function settingInfo(title,msg){alert(title+'\n\n'+msg)}
+function toggleSetting(row,title){const input=row.querySelector('input');if(input)input.checked=!input.checked;if(title==='Hiển thị số dư'){balanceVisible=!!input.checked;updateBalance()}else alert((input&&input.checked?'Đã bật ':'Đã tắt ')+title.toLowerCase()+'.')}
+function initLogin(){
+  const btn=document.getElementById("loginButton");
+  const inp=document.getElementById("loginPassword");
+  const eye=document.getElementById("toggleLoginPasswordBtn");
+  if(btn) btn.addEventListener("click",unlockGame);
+  if(inp) inp.addEventListener("keydown",function(ev){if(ev.key==="Enter"){ev.preventDefault();unlockGame();}});
+  if(eye) eye.addEventListener("click",toggleLoginPassword);
+  showLogin();
+}
+function safeInit(){
+  try{document.getElementById("greetingName").innerText=simUserName;updateHeaderInfo();updateBalance();renderHistory();updateBell();}catch(e){}
+  initLogin();
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",safeInit); else safeInit();
+window.addEventListener("beforeunload",()=>{try{saveState()}catch(e){}});
+</script>
+</div>
+<script>
+(function(){
+  const oldStoreSet = window.storeSet;
+  if(typeof oldStoreSet==="function"){
+    window.storeSet=function(k,v){
+      oldStoreSet(k,v);
+      try{simSave()}catch(e){}
+    };
+  }
+})();
+</script>
+
+<script>
+/* V23: bộ điều khiển đăng nhập độc lập, không phụ thuộc các chức năng khác */
+(function(){
+  function qs(id){return document.getElementById(id)}
+  window.showLogin = function(){
+    var o=qs("loginOverlay");
+    if(o){o.classList.remove("hidden");o.style.display="flex";}
+    var i=qs("loginPassword");
+    if(i){i.value=""; setTimeout(function(){try{i.focus()}catch(e){}},50);}
+  };
+  window.toggleLoginPassword = function(){
+    var i=qs("loginPassword"),b=qs("toggleLoginPasswordBtn");
+    if(!i)return;
+    i.type=(i.type==="password")?"text":"password";
+    if(b)b.textContent=(i.type==="password")?"👁":"🙈";
+  };
+  window.unlockGame = function(){
+    var i=qs("loginPassword"),s=qs("loginStatus"),o=qs("loginOverlay");
+    var pw=i?String(i.value||""):"";
+    var saved="123456";
+    try{saved=localStorage.getItem("TECHCOMBANK_SIM_PASSWORD_V24")||"123456"}catch(e){}
+    if(pw!==saved){
+      if(s){s.classList.remove("hidden");s.innerHTML="❌ Mật khẩu không đúng.<br><small>Mật khẩu mặc định: <b>123456</b></small>";}
+      return false;
+    }
+    try{localStorage.setItem("TECHCOMBANK_SIM_PASSWORD_V24",saved)}catch(e){}
+    if(s){s.classList.add("hidden");s.innerHTML=""}
+    if(o){o.classList.add("hidden");o.style.display="none"}
+    var h=qs("home"),sc=qs("screen");
+    if(h)h.classList.remove("hidden");
+    if(sc)sc.classList.add("hidden");
+    return true;
+  };
+  window.showLoginOptions = function(){
+    alert("Tùy chọn đăng nhập mô phỏng:\n\n• Mật khẩu\n• Vân tay\n• Face ID\n• Khôi phục bằng OTP");
+  };
+  window.showForgotPassword = function(){
+    var sheet=document.querySelector("#loginOverlay .login-sheet");
+    if(!sheet)return;
+    sheet.innerHTML='<div class="login-avatar">🔑</div>'+
+      '<h2 style="text-align:center;color:#17352c">Quên mật khẩu</h2>'+
+      '<p style="text-align:center;color:#71807a;font-size:13px">OTP mô phỏng: 123456</p>'+
+      '<label class="login-label">Số điện thoại</label>'+
+      '<input id="v23Phone" inputmode="tel" placeholder="Nhập số điện thoại">'+
+      '<label class="login-label">Mã OTP</label>'+
+      '<input id="v23Otp" inputmode="numeric" maxlength="6" placeholder="Nhập 123456">'+
+      '<label class="login-label">Mật khẩu mới</label>'+
+      '<input id="v23NewPw" type="password" placeholder="Mật khẩu mới">'+
+      '<button class="primary login-submit" type="button" onclick="v23ResetPassword()">Đặt lại mật khẩu</button>'+
+      '<button type="button" style="width:100%;margin-top:8px;background:#eef5f2;color:#09684c" onclick="location.reload()">← Quay lại đăng nhập</button>';
+  };
+  window.v23ResetPassword=function(){
+    var otp=qs("v23Otp"),pw=qs("v23NewPw");
+    if(!otp||otp.value!=="123456"){alert("❌ OTP không đúng. Hãy nhập 123456.");return}
+    if(!pw||pw.value.length<4){alert("❌ Mật khẩu mới phải có ít nhất 4 ký tự.");return}
+    try{localStorage.setItem("TECHCOMBANK_SIM_PASSWORD_V24",pw.value)}catch(e){}
+    alert("✅ Đã đổi mật khẩu. Hãy đăng nhập bằng mật khẩu mới.");
+    location.reload();
+  };
+  function wire(){
+    var b=qs("loginButton"),e=qs("toggleLoginPasswordBtn"),i=qs("loginPassword");
+    if(b){b.onclick=window.unlockGame}
+    if(e){e.onclick=window.toggleLoginPassword}
+    if(i){i.onkeydown=function(ev){if(ev.key==="Enter"){ev.preventDefault();window.unlockGame()}}}
+    window.showLogin();
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",wire);else wire();
+})();
+</script>
+
+
+<script id="v24-button-repair">
+/* Lớp tương thích V24: bổ sung các nút bị thiếu liên kết, giữ toàn bộ dữ liệu trong game mô phỏng. */
+(function(){
+  const $ = id => document.getElementById(id);
+  const money = n => Number(n||0).toLocaleString('vi-VN')+' VND';
+  const get = (k,d='') => { try { const v=localStorage.getItem(k); return v===null?d:v; } catch(e){return d;} };
+  const set = (k,v) => { try {localStorage.setItem(k,String(v));} catch(e){} };
+  function msg(t){ alert(t); }
+  function screen(html){
+    const h=$('home'), sc=$('screen');
+    if(h)h.classList.add('hidden');
+    if(sc){sc.innerHTML=html;sc.classList.remove('hidden');}
+    window.scrollTo(0,0);
+  }
+  function balanceVal(){ return Math.max(0,Number(get('simBalance','50000000'))||0); }
+  function saveBalance(v){set('simBalance',Math.max(0,Number(v)||0));}
+  function hist(){try{const x=JSON.parse(get('simHistory','[]'));return Array.isArray(x)?x:[]}catch(e){return []}}
+  function addHistory(item){const h=hist();h.unshift({...item, time:new Date().toLocaleString('vi-VN')});set('simHistory',JSON.stringify(h));try{if(typeof renderHistory==='function')renderHistory()}catch(e){}}
+  window.updateBalance=function(){
+    const v=balanceVal(), text=(window.balanceVisible===false||get('simBalanceVisible','1')==='0')?'••••••••':money(v);
+    document.querySelectorAll('#balance').forEach(el=>el.textContent=text);
+  };
+  window.updateHeaderInfo=function(){
+    const name=get('simUserName','Bùi Văn Việt Hùng'), acc=get('simAccountNumber','1706201412');
+    document.querySelectorAll('#greetingName').forEach(el=>el.textContent=name);
+    document.querySelectorAll('#accountNumber').forEach(el=>el.textContent=acc);
+    const ln=$('loginUserName');if(ln)ln.textContent=name;
+    const av=$('avatarInitial');if(av)av.textContent=name.split(/\s+/).slice(-2).map(x=>x[0]||'').join('').toUpperCase();
+    window.updateBalance();
+  };
+  window.toggleBalance=function(){
+    const visible=get('simBalanceVisible','1')==='0';
+    set('simBalanceVisible',visible?'1':'0');window.balanceVisible=visible;
+    const b=$('balanceEye'); if(b)b.textContent=visible?'👁️':'🙈';
+    window.updateBalance();
+  };
+  window.copyAccount=function(){const a=get('simAccountNumber','1706201412');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(a).then(()=>msg('Đã sao chép số tài khoản mô phỏng.')).catch(()=>prompt('Sao chép số tài khoản:',a));else prompt('Sao chép số tài khoản:',a)};
+  window.backHome=function(){const h=$('home'),sc=$('screen');if(sc)sc.classList.add('hidden');if(h)h.classList.remove('hidden');document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));if($('navHome'))$('navHome').classList.add('active');};
+  window.navigate=function(where){
+    document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+    const map={home:'navHome',transactions:'navTransactions',settings:'navSettings'};if($(map[where]))$(map[where]).classList.add('active');
+    if(where==='home')window.backHome();else if(where==='settings')window.showSettings();else window.showNotifications();
+  };
+  window.lockGame=function(){const o=$('loginOverlay');if(o){o.classList.remove('hidden');o.style.display='flex';}const i=$('loginPassword');if(i)i.value='';};
+  window.showNotifications=function(){
+    const h=hist();
+    screen('<button onclick="backHome()">← Trang chủ</button><h2>◷ Lịch sử giao dịch</h2>'+
+      (h.length?h.slice(0,100).map(x=>'<div class="history-row"><b>'+String(x.title||x.type||'Giao dịch mô phỏng').replace(/[<>]/g,'')+'</b><div>'+String(x.time||'').replace(/[<>]/g,'')+'</div><div>'+String(x.amount||'').replace(/[<>]/g,'')+'</div><small>'+String(x.detail||'').replace(/[<>]/g,'')+'</small></div>').join(''):'<div class="history-empty">Chưa có giao dịch mô phỏng.</div>'));
+  };
+  window.renderHistory=function(){};
+  window.showAccounts=function(){screen('<button onclick="backHome()">← Trang chủ</button><h2>Tài khoản & Thẻ</h2><div class="feature-card"><p>Tài khoản mô phỏng: <b>'+get('simAccountNumber','1706201412')+'</b></p><p>Số dư mô phỏng: <b>'+money(balanceVal())+'</b></p><p>Không liên kết ngân hàng thật.</p></div>')};
+  window.showAccountQR=function(){window.showQR();};
+  window.showAllServices=function(){screen('<button onclick="backHome()">← Trang chủ</button><h2>Tất cả dịch vụ</h2><div class="settings-tiles">'+[['⇄','Chuyển tiền','showTransfer'],['▦','Quét QR','showQR'],['＋','Nạp tiền','showDeposit'],['🐷','Tiết kiệm','showPiggy'],['▤','Nạp điện thoại','showPhone'],['🎟','Vé xem phim','showMovie'],['✈️','Vé máy bay','showFlight'],['🚕','Taxi','showTaxi'],['🚆','Vé tàu','showTrain'],['🚌','Xe khách','showCoach'],['💳','Vay mô phỏng','showLoan'],['⚙️','Cài đặt','showSettings']].map(x=>'<button onclick="'+x[2]+'()">'+x[0]+'<span>'+x[1]+'</span></button>').join('')+'</div>')};
+  window.showTransfer=function(){
+    screen('<button onclick="backHome()">← Trang chủ</button><h2>Chuyển tiền mô phỏng</h2><label>Ngân hàng nhận</label><select id="trBank">'+(typeof BANK_OPTIONS!=='undefined'?BANK_OPTIONS:'<option>Ngân hàng mô phỏng</option>')+'</select><label>Số tài khoản nhận</label><input id="trAccount" inputmode="numeric" placeholder="Nhập số tài khoản"><label>Tên người nhận</label><input id="trName" placeholder="Tên người nhận"><label>Số tiền (VND)</label><input id="trAmount" type="number" min="1" placeholder="Nhập số tiền"><label>Nội dung</label><input id="trNote" placeholder="Nội dung chuyển tiền"><button class="primary" onclick="confirmTransfer()">Tiếp tục</button><div class="simulation-login-note">Giao dịch chỉ thay đổi số dư trong game, không chuyển tiền thật.</div>');
+  };
+  window.confirmTransfer=function(){
+    const amount=Number(($('trAmount')||{}).value),name=(($('trName')||{}).value||'Người nhận mô phỏng').trim(),account=(($('trAccount')||{}).value||'').trim(),note=(($('trNote')||{}).value||'').trim();
+    const bankEl=$('trBank'),bank=bankEl?(bankEl.options[bankEl.selectedIndex]?.text||bankEl.value||'Ngân hàng mô phỏng'):'Ngân hàng mô phỏng';
+    if(!account||!Number.isFinite(amount)||amount<=0){msg('Vui lòng nhập số tài khoản và số tiền hợp lệ.');return}
+    if(amount>balanceVal()){msg('Số dư mô phỏng không đủ.');return}
+    const otp=prompt('Nhập OTP mô phỏng (123456):');if(otp===null)return;if(String(otp).trim()!==String(currentOTP)){msg('OTP cũ không đúng. Vui lòng kiểm tra và nhập lại.');return}
+    const now=new Date(),time=now.toLocaleString('vi-VN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}),txid='SIM'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0')+String(now.getSeconds()).padStart(2,'0')+String(Math.floor(Math.random()*9000+1000));
+    const safe=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    saveBalance(balanceVal()-amount);
+    addHistory({title:'Chuyển tiền mô phỏng',time,amount:'-'+money(amount),detail:'Ngân hàng: '+bank+' • Người nhận: '+name+' • STK: '+account+' • Nội dung: '+(note||'Không có')+' • Mã GD: '+txid});
+    window.updateBalance();
+    screen('<div class="receipt-wrap" style="max-width:520px;margin:0 auto;background:#fff;color:#202b36;border-radius:18px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.12)">'+
+      '<div style="background:#e21b2d;color:#fff;padding:22px 20px;text-align:center"><div style="font-size:12px;letter-spacing:1.4px;font-weight:800">TECHCOMBANK · GAME MÔ PHỎNG</div><div style="margin:18px auto 10px;width:54px;height:54px;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px">✓</div><h2 style="margin:0;font-size:22px">Chuyển tiền thành công</h2><div style="margin-top:7px;font-size:12px;opacity:.95">BIÊN NHẬN GIAO DỊCH GIẢ LẬP · KHÔNG CÓ GIÁ TRỊ THANH TOÁN</div></div>'+
+      '<div style="padding:22px 20px"><div style="text-align:center;padding-bottom:20px;border-bottom:1px dashed #d8dde3"><div style="font-size:13px;color:#697586">Số tiền giao dịch</div><div style="font-size:30px;font-weight:800;color:#d71920;margin:6px 0">'+safe(money(amount))+'</div><div style="font-size:12px;color:#657080">VND · Giao dịch chỉ cập nhật số dư trong trò chơi</div></div>'+
+      '<div style="font-size:14px;font-weight:800;margin:20px 0 8px;color:#263746">THÔNG TIN NGƯỜI NHẬN</div>'+receiptRow('Ngân hàng nhận',safe(bank))+receiptRow('Tên người nhận',safe(name))+receiptRow('Số tài khoản',safe(account))+
+      '<div style="font-size:14px;font-weight:800;margin:20px 0 8px;color:#263746">CHI TIẾT GIAO DỊCH</div>'+receiptRow('Trạng thái','<span style="color:#16834a;font-weight:700">Thành công (mô phỏng)</span>')+receiptRow('Thời gian giao dịch',safe(time))+receiptRow('Mã giao dịch',safe(txid))+receiptRow('Nội dung chuyển tiền',safe(note||'Không có nội dung'))+receiptRow('Tài khoản nguồn',safe(get('simAccountNumber','1706201412')))+receiptRow('Số dư mô phỏng còn lại',safe(money(balanceVal())))+
+      '<div style="margin-top:20px;padding:12px;background:#fff5e6;border:1px solid #ffdda8;border-radius:10px;color:#80520a;font-size:12px;line-height:1.5">⚠️ Đây là biên nhận của GAME MÔ PHỎNG, không phải xác nhận từ ngân hàng. Không có khoản tiền thật nào được chuyển.</div></div>'+
+      '<div class="receipt-actions" style="display:flex;gap:10px;padding:0 20px 22px"><button class="primary" style="flex:1" onclick="window.print()">In biên nhận</button><button style="flex:1" onclick="backHome()">Về trang chủ</button></div></div>');
+  };
+  function receiptRow(label,value){return '<div style="display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid #edf0f3;font-size:13px"><span style="color:#687586;flex:0 0 42%">'+label+'</span><span style="font-weight:600;text-align:right;overflow-wrap:anywhere">'+value+'</span></div>'}
+  window.showDeposit=function(){screen('<button onclick="backHome()">← Trang chủ</button><h2>Nạp tiền mô phỏng</h2><label>Số tiền (VND)</label><input id="depAmount" type="number" min="1" placeholder="Nhập số tiền"><button class="primary" onclick="confirmDeposit()">Nạp tiền</button><p class="simulation-login-note">Chỉ cộng số dư giả lập, không nhận tiền thật.</p>')};
+  window.confirmDeposit=function(){const a=Number(($('depAmount')||{}).value);if(!Number.isFinite(a)||a<=0){msg('Nhập số tiền hợp lệ.');return}saveBalance(balanceVal()+a);addHistory({title:'Nạp tiền mô phỏng',amount:'+'+money(a)});window.updateBalance();msg('Đã cộng số dư mô phỏng.');window.backHome()};
+  window.showPiggy=function(){screen('<button onclick="backHome()">← Trang chủ</button><h2>Ống heo tiết kiệm</h2><p>Số dư hiện tại: <b>'+money(Number(get('piggyBalance','0'))||0)+'</b></p><label>Số tiền gửi</label><input id="piggyAmount" type="number" min="1" placeholder="Nhập số tiền"><button class="primary" onclick="confirmPiggy()">Gửi tiết kiệm</button><button class="primary" style="background:#0b6b4b" onclick="withdrawPiggy()">Rút về số dư</button>')};
+  window.confirmPiggy=function(){const a=Number(($('piggyAmount')||{}).value);if(a<=0||a>balanceVal()){msg('Số tiền không hợp lệ hoặc số dư không đủ.');return}saveBalance(balanceVal()-a);set('piggyBalance',(Number(get('piggyBalance','0'))||0)+a);window.updateBalance();window.showPiggy()};
+  window.withdrawPiggy=function(){const a=Number(get('piggyBalance','0'))||0;if(a<=0){msg('Ống heo chưa có tiền.');return}saveBalance(balanceVal()+a);set('piggyBalance','0');window.updateBalance();msg('Đã rút số dư tiết kiệm mô phỏng.');window.showPiggy()};
+  window.showPhone=function(){window.simplePurchase('Nạp điện thoại',['Số điện thoại','Số tiền (VND)'])};
+  window.showMovie=function(){window.simplePurchase('Đặt vé xem phim',['Tên phim','Số vé'])};
+  window.showFlight=function(){window.simplePurchase('Vé máy bay',['Điểm đi','Điểm đến','Số tiền (VND)'])};
+  window.showTaxi=function(){window.simplePurchase('Đặt Taxi',['Điểm đón','Điểm đến','Số tiền (VND)'])};
+  window.showTrain=function(){window.simplePurchase('Vé tàu hỏa',['Ga đi','Ga đến','Số tiền (VND)'])};
+  window.showCoach=function(){window.simplePurchase('Vé xe khách',['Điểm đi','Điểm đến','Số tiền (VND)'])};
+  window.showLoan=function(){screen('<button onclick="backHome()">← Trang chủ</button><h2>Vay tiền mô phỏng</h2><label>Số tiền muốn vay (VND)</label><input id="loanAmount" type="number" min="1"><button class="primary" onclick="alert(\'Đã ghi nhận yêu cầu vay mô phỏng; không phát sinh khoản vay thật.\')">Gửi yêu cầu mô phỏng</button>')};
+  window.simplePurchase=function(title,fields){
+    screen('<button onclick="backHome()">← Trang chủ</button><h2>'+title+'</h2>'+fields.map((f,i)=>'<label>'+f+'</label><input id="purchase'+i+'" '+(f.includes('Số tiền')||f.includes('Số vé')?'type="number" min="1"':'')+' placeholder="Nhập '+f.toLowerCase()+'">').join('')+'<button class="primary" onclick="finishPurchase('+JSON.stringify(title)+','+JSON.stringify(fields)+')">Xác nhận mô phỏng</button><p class="simulation-login-note">Chức năng giải trí mô phỏng, không đặt dịch vụ thật.</p>');
+  };
+  window.finishPurchase=function(title,fields){const detail=fields.map((f,i)=>f+': '+(($('purchase'+i)||{}).value||'')).join(' • ');addHistory({title:title+' (mô phỏng)',amount:'',detail});msg('Đã ghi nhận thao tác trong game mô phỏng.');window.backHome()};
+  window.showQR=function(){screen('<button onclick="backHome()">← Trang chủ</button><h2>▦ Quét QR / Chọn ảnh từ Album</h2><p>Chọn ảnh mã QR từ Album/Thư viện ảnh. Nếu không tự nhận diện được chữ, bạn có thể nhập tay bên dưới.</p><label>Chọn ảnh QR</label><input id="qrFile" type="file" accept="image/*"><canvas id="qrCanvas" style="display:none"></canvas><img id="qrPreview" class="preview" alt="Ảnh QR" style="display:none;max-width:100%;margin:12px 0"><button class="primary" onclick="readQRImage()">Đọc QR và nhận diện thông tin</button><div id="qrResult" class="message">Chưa chọn ảnh.</div><hr><h3>Thông tin nhận diện / nhập tay</h3><label>Ngân hàng</label><input id="qrBank" placeholder="Ví dụ: Vietcombank, MB Bank..."><label>Tên chủ tài khoản</label><input id="qrOwner" placeholder="Nhập tên chủ tài khoản"><label>Số tài khoản</label><input id="qrAccount" inputmode="numeric" placeholder="Nhập số tài khoản"><label>Số tiền (không bắt buộc)</label><input id="qrAmount" inputmode="numeric" type="number" min="0" placeholder="Nhập số tiền nếu có"><label>Nội dung chuyển tiền (không bắt buộc)</label><input id="qrNote" placeholder="Nội dung chuyển tiền"><button class="primary" onclick="useQRDetails()">Dùng thông tin này</button><p class="simulation-login-note">Đây chỉ là game mô phỏng. Hãy kiểm tra thông tin OCR vì ảnh mờ hoặc mã QR theo định dạng khác có thể không đọc chính xác.</p>')};
+  function setQRField(id,value){const el=$(id);if(el&&value&&!String(el.value||'').trim())el.value=String(value).trim()}
+  function parseQRText(data){
+    const raw=String(data||'');let bank='',account='',owner='',amount='',note='';
+    // VietQR EMV: tag 38 contains bank/acquirer and account; extract recognizable subfields where possible.
+    const compact=raw.replace(/\s+/g,' ');
+    const accMatch=compact.match(/(?:account(?:number)?|stk|so tai khoan|số tài khoản)[\s:=_-]*([0-9]{6,20})/i);
+    if(accMatch)account=accMatch[1];
+    const amtMatch=compact.match(/(?:amount|sotien|số tiền|vnd)[\s:=_-]*([0-9]{1,12})/i);if(amtMatch)amount=amtMatch[1];
+    const noteMatch=compact.match(/(?:addInfo|content|noi dung|nội dung)[\s:=_-]*([^|;]+)/i);if(noteMatch)note=noteMatch[1].trim();
+    const ownerMatch=compact.match(/(?:accountName|ten chu tai khoan|tên chủ tài khoản|ten nguoi nhan|tên người nhận)[\s:=_-]*([^|;]+)/i);if(ownerMatch)owner=ownerMatch[1].trim();
+    const known=['Vietcombank','VietinBank','BIDV','Agribank','Techcombank','MB Bank','MBBank','ACB','VPBank','TPBank','Sacombank','HDBank','SHB','VIB','MSB','OCB','LPBank','NCB','PVcomBank'];
+    bank=known.find(b=>new RegExp(b.replace(/\s/g,'\\s*'),'i').test(compact))||'';
+    // EMV/VietQR payloads are TLV. Extract nested merchant-account info and proxy/acquirer id when available.
+    try{let i=0;while(i+4<=raw.length){const id=raw.slice(i,i+2),len=parseInt(raw.slice(i+2,i+4),10);if(!/^\d\d$/.test(id)||!Number.isFinite(len)||len<0||i+4+len>raw.length)break;const val=raw.slice(i+4,i+4+len);if(id==='38'||id==='26'||id==='27'){const nums=val.match(/\d{6,20}/g)||[];if(!account&&nums.length)account=nums[nums.length-1];}if(id==='54'&&!amount)amount=val;if(id==='62'&&!note)note=val.replace(/^\d{2}\d{2}/,'');i+=4+len;if(id==='63')break;}}catch(e){}
+    return {raw,bank,account,owner,amount,note};
+  }
+  window.readQRImage=async function(){
+    const f=($('qrFile')||{}).files&&$('qrFile').files[0];if(!f){msg('Vui lòng chọn ảnh từ Album trước.');return}
+    const img=$('qrPreview'),result=$('qrResult');const url=URL.createObjectURL(f);img.src=url;img.style.display='block';
+    const process=async()=>{
+      let qrData='';
+      try{if(typeof jsQR==='function'){const c=$('qrCanvas'),ctx=c.getContext('2d');c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);const d=ctx.getImageData(0,0,c.width,c.height);const code=jsQR(d.data,d.width,d.height);if(code)qrData=code.data;}}catch(e){}
+      const parsed=parseQRText(qrData);setQRField('qrBank',parsed.bank);setQRField('qrAccount',parsed.account);setQRField('qrOwner',parsed.owner);setQRField('qrAmount',parsed.amount);setQRField('qrNote',parsed.note);
+      let ocrText='';
+      try{if(window.Tesseract&&typeof window.Tesseract.recognize==='function'){result.textContent='Đã mở ảnh. Đang nhận diện chữ…';const o=await window.Tesseract.recognize(img,'vie+eng');ocrText=(o.data&&o.data.text)||'';}}
+      catch(e){try{if(window.Tesseract&&typeof window.Tesseract.recognize==='function'){const o=await window.Tesseract.recognize(img,'eng');ocrText=(o.data&&o.data.text)||'';}}catch(e2){}}
+      if(ocrText){const lines=ocrText.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const accountLine=lines.find(x=>/(?:\d[ -]?){8,20}/.test(x));if(!$('qrAccount').value&&accountLine){const m=accountLine.match(/(?:\d[ -]?){8,20}/);if(m)setQRField('qrAccount',m[0].replace(/[ -]/g,''));}
+        if(!$('qrOwner').value){const nameLine=lines.find(x=>/(?:NGUYEN|TRAN|LE |PHAM|HOANG|HUYNH|DO |VU |BUI |ĐẶNG|NGUYỄN|TRẦN|LÊ |PHẠM|HOÀNG|HUỲNH|ĐỖ|VŨ|BÙI)/i.test(x)&&!/(BANK|NGAN HANG|VIETQR|ACCOUNT|STK)/i.test(x));if(nameLine)setQRField('qrOwner',nameLine);}
+        if(!$('qrBank').value){const b=lines.find(x=>/(VIETCOMBANK|TECHCOMBANK|VIETINBANK|AGRIBANK|BIDV|MB BANK|MBBANK|VPBANK|ACB|TPBANK|SACOMBANK|HDBANK|VIB|OCB|LPBANK|NCB)/i.test(x));if(b)setQRField('qrBank',b);}}
+      result.textContent=(qrData?'Đã đọc được dữ liệu QR. ':'')+(ocrText?'Đã thử nhận diện chữ trong ảnh. ':'')+((qrData||ocrText)?'Vui lòng kiểm tra lại các ô thông tin bên dưới.':'Chưa tự nhận diện được nội dung. Bạn có thể nhập tay vào các ô bên dưới.')+(qrData?'\nDữ liệu QR: '+qrData.slice(0,500):'');
+    };
+    img.onload=process;img.onerror=()=>{result.textContent='Không mở được ảnh đã chọn.'};if(img.complete&&img.naturalWidth)process();
+  };
+  window.useQRDetails=function(){const bank=(($('qrBank')||{}).value||'').trim(),owner=(($('qrOwner')||{}).value||'').trim(),account=(($('qrAccount')||{}).value||'').trim(),amount=(($('qrAmount')||{}).value||'').trim(),note=(($('qrNote')||{}).value||'').trim();if(!account&&!owner&&!bank){msg('Hãy đọc QR hoặc nhập ít nhất số tài khoản/người nhận.');return}window.showTransfer();setTimeout(()=>{if($('trBank')&&bank){const sel=$('trBank');const opt=[...sel.options].find(o=>o.text.toLowerCase().includes(bank.toLowerCase())||bank.toLowerCase().includes(o.text.toLowerCase()));if(opt)sel.value=opt.value;}if($('trAccount'))$('trAccount').value=account;if($('trName'))$('trName').value=owner;if($('trAmount')&&amount)$('trAmount').value=amount;if($('trNote'))$('trNote').value=note;},0)};
+  window.showChangeBankPassword=function(){screen('<button onclick="showSettings()">← Cài đặt</button><h2>Đổi mật khẩu mô phỏng</h2><label>Mật khẩu hiện tại</label><input id="oldPw" type="password"><label>Mật khẩu mới (ít nhất 4 ký tự)</label><input id="newPw" type="password"><button class="primary" onclick="changeSimPassword()">Lưu mật khẩu</button>')};
+  window.changeSimPassword=function(){const old=($('oldPw')||{}).value||'',pw=($('newPw')||{}).value||'';if(old!==(get('TECHCOMBANK_SIM_PASSWORD_V24',get('simBankPassword_v22','123456')))){msg('Mật khẩu hiện tại chưa đúng.');return}if(pw.length<4){msg('Mật khẩu mới cần ít nhất 4 ký tự.');return}set('TECHCOMBANK_SIM_PASSWORD_V24',pw);set('simBankPassword_v22',pw);msg('Đã đổi mật khẩu game mô phỏng.');window.showSettings()};
+  window.saveState=function(){try{if(typeof simSave==='function')simSave();set('simBalance',balanceVal());set('simHistory',JSON.stringify(hist()))}catch(e){}};
+  // Đảm bảo nút đăng nhập dùng chung một mật khẩu, không bị các bản vá cũ ghi đè.
+  window.unlockGame=function(){
+    const input=$('loginPassword'),status=$('loginStatus'),overlay=$('loginOverlay');
+    const pw=input?String(input.value||''):'',saved=get('TECHCOMBANK_SIM_PASSWORD_V24',get('simBankPassword_v22','123456'));
+    if(pw!==saved){if(status){status.classList.remove('hidden');status.style.display='block';status.textContent='❌ Mật khẩu chưa đúng. Mật khẩu mặc định là 123456 nếu chưa đổi.'}return false}
+    set('TECHCOMBANK_SIM_PASSWORD_V24',saved);if(status){status.classList.add('hidden');status.textContent=''}
+    if(overlay){overlay.classList.add('hidden');overlay.style.display='none';overlay.style.visibility='hidden';overlay.style.pointerEvents='none'}
+    const home=$('home'),screenEl=$('screen');if(home)home.classList.remove('hidden');if(screenEl)screenEl.classList.add('hidden');
+    window.updateHeaderInfo();window.updateBalance();return true;
+  };
+  document.addEventListener('DOMContentLoaded',()=>{window.updateHeaderInfo();window.updateBalance();});
+  try{window.updateHeaderInfo();window.updateBalance()}catch(e){}
+})();
+</script>
+
+
+<style id="v24-final-interaction-fix">
+/* Lớp phủ đăng nhập chỉ được phép chặn thao tác khi đang đăng nhập. */
+#loginOverlay.hidden, #loginOverlay[data-sim-closed="1"] {
+  display:none !important; visibility:hidden !important; opacity:0 !important;
+  pointer-events:none !important; z-index:-1 !important;
+}
+#home, #screen, .app, .bottom-nav { position:relative; z-index:1; }
+#home button, #screen button, .bottom-nav button {
+  pointer-events:auto !important; touch-action:manipulation; cursor:pointer;
+}
+</style>
+<script id="v24-final-interaction-fix-js">
+(function(){
+  'use strict';
+  var overlay=document.getElementById('loginOverlay');
+  function closeLoginLayer(){
+    var o=document.getElementById('loginOverlay');
+    if(!o) return;
+    if(o.classList.contains('hidden') || o.style.display==='none' || o.getAttribute('data-sim-closed')==='1') {
+      o.classList.add('hidden');
+      o.setAttribute('data-sim-closed','1');
+      o.style.setProperty('display','none','important');
+      o.style.setProperty('visibility','hidden','important');
+      o.style.setProperty('pointer-events','none','important');
+    } else {
+      o.removeAttribute('data-sim-closed');
+      o.style.removeProperty('visibility');
+      o.style.removeProperty('pointer-events');
+      o.style.removeProperty('z-index');
+    }
+  }
+  /* Removed the self-observing MutationObserver: closeLoginLayer changes the same
+     attributes it watches, which can create a mutation loop and freeze mobile browsers. */
+  var originalUnlock=window.unlockGame;
+  window.unlockGame=function(){
+    var result=typeof originalUnlock==='function' ? originalUnlock.apply(this,arguments) : false;
+    var o=document.getElementById('loginOverlay');
+    if(o && (result===true || o.classList.contains('hidden') || o.style.display==='none')){
+      o.classList.add('hidden');
+      o.setAttribute('data-sim-closed','1');
+      o.style.setProperty('display','none','important');
+      o.style.setProperty('visibility','hidden','important');
+      o.style.setProperty('pointer-events','none','important');
+      var h=document.getElementById('home'), sc=document.getElementById('screen');
+      if(h) h.classList.remove('hidden');
+      if(sc && !sc.innerHTML.trim()) sc.classList.add('hidden');
+    }
+    return result;
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    var o=document.getElementById('loginOverlay');
+    if(o && o.classList.contains('hidden')) closeLoginLayer();
+    document.querySelectorAll('#home button, #screen button, .bottom-nav button').forEach(function(b){
+      b.style.setProperty('pointer-events','auto','important');
+      b.style.touchAction='manipulation';
+    });
+  });
+})();
+</script>
+
+
+<script id="v24-profile-bank-settings-fix">
+(function(){
+  const bankList = (typeof BANKS !== 'undefined' && Array.isArray(BANKS)) ? BANKS : ['Techcombank','Vietcombank','BIDV','VietinBank','MB Bank','Agribank','ACB','VPBank','TPBank','Sacombank','VIB','SHB'];
+  window.simBankName = (typeof storeGet === 'function' ? storeGet('simBankName') : null) || 'Techcombank';
+  window.showProfileSettings = function(){
+    const options = bankList.map(b => `<option value="${escapeHTML(b)}" ${b===window.simBankName?'selected':''}>${escapeHTML(b)}</option>`).join('');
+    showScreen(`<button onclick="showSettings()">← Cài đặt</button><h2>👤 Thông tin tài khoản mô phỏng</h2>
+      <p style="color:#777;font-size:13px">Các thông tin dưới đây chỉ dùng trong trò chơi, không thay đổi dữ liệu ngân hàng thật.</p>
+      <label>Họ và tên chủ tài khoản</label><input id="profileName" value="${escapeHTML(simUserName)}" autocomplete="off" placeholder="Nhập họ và tên">
+      <label>Ngân hàng mô phỏng</label><select id="profileBank">${options}</select>
+      <label>Số tài khoản mô phỏng</label><input id="profileAccount" inputmode="numeric" maxlength="20" value="${escapeHTML(simAccountNumber)}" placeholder="Nhập 6–20 chữ số">
+      <label>Số điện thoại mô phỏng</label><input id="profilePhone" inputmode="tel" value="${escapeHTML(simPhone)}" autocomplete="off" placeholder="Nhập số điện thoại">
+      <button class="primary" onclick="saveProfile()">💾 Lưu thay đổi</button>`);
+  };
+  window.saveProfile = function(){
+    const name=(document.getElementById('profileName')?.value||'').trim();
+    const bank=(document.getElementById('profileBank')?.value||'Techcombank').trim();
+    const account=(document.getElementById('profileAccount')?.value||'').trim();
+    const phone=(document.getElementById('profilePhone')?.value||'').trim();
+    if(!name){alert('Vui lòng nhập họ và tên chủ tài khoản.');return;}
+    if(!/^\d{6,20}$/.test(account)){alert('Số tài khoản mô phỏng phải gồm 6–20 chữ số.');return;}
+    if(phone && !/^[+()\d .-]{6,20}$/.test(phone)){alert('Vui lòng kiểm tra số điện thoại.');return;}
+    simUserName=name; simAccountNumber=account; simPhone=phone; window.simBankName=bank;
+    storeSet('simUserName',name);storeSet('simAccountNumber',account);storeSet('simPhone',phone);storeSet('simBankName',bank);
+    document.querySelectorAll('#greetingName').forEach(el=>el.textContent=name);
+    document.querySelectorAll('#accountNumber').forEach(el=>el.textContent=account);
+    const bankLabel=document.getElementById('simBankLabel');if(bankLabel)bankLabel.textContent=bank;
+    const avatar=document.getElementById('avatarInitial');if(avatar)avatar.textContent=name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
+    try{if(typeof simSave==='function')simSave();}catch(e){}
+    alert('Đã lưu thông tin tài khoản mô phỏng.');showSettings();
+  };
+  document.addEventListener('DOMContentLoaded',function(){const label=document.getElementById('simBankLabel');if(label)label.textContent=window.simBankName;});
+})();
+</script>
+
+<script id="v24-nonblocking-external-libraries">
+/* Các thư viện QR/OCR tải bất đồng bộ để mạng chậm/ngoại tuyến không chặn JavaScript của game. */
+window.addEventListener('error', function(ev){
+  if (ev && ev.target && ev.target.tagName === 'SCRIPT' && /jsqr|tesseract/i.test(ev.target.src || '')) {
+    console.warn('Thư viện QR/OCR không tải được; các chức năng khác của game vẫn hoạt động.');
+  }
+}, true);
+</script>
+</body></html>
